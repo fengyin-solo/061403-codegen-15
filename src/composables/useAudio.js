@@ -96,6 +96,29 @@ export function useAudio() {
     }
   }
 
+  function playDrink() {
+    initAudio()
+    playTone(600, 0.1, 'sine', 0.2)
+    setTimeout(() => playTone(800, 0.15, 'sine', 0.2), 80)
+    setTimeout(() => playTone(1000, 0.1, 'sine', 0.15), 160)
+  }
+
+  function playCollectSnow() {
+    initAudio()
+    playTone(800, 0.08, 'triangle', 0.15)
+    setTimeout(() => playTone(1000, 0.08, 'triangle', 0.15), 60)
+    setTimeout(() => playTone(1200, 0.1, 'triangle', 0.15), 120)
+  }
+
+  function playMeltSnow() {
+    initAudio()
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        playTone(200 + Math.random() * 100, 0.15, 'triangle', 0.1)
+      }, i * 80)
+    }
+  }
+
   function toggleMute() {
     muted.value = !muted.value
   }
@@ -112,6 +135,9 @@ export function useAudio() {
     playEat,
     playCraft,
     playBlizzard,
+    playDrink,
+    playCollectSnow,
+    playMeltSnow,
     toggleMute
   }
 }

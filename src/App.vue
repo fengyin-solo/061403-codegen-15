@@ -38,6 +38,9 @@
             :food="food"
             :hide="hide"
             :tools="tools"
+            :water="water"
+            :snow="snow"
+            :thirst="thirst"
           />
         </div>
 
@@ -63,13 +66,22 @@
             :gameOver="gameOver"
             :canFire="canMakeFire"
             :canCraft="wood >= 2 && hide >= 1"
+            :canMeltSnow="canMeltSnow"
+            :canBoilWater="canBoilWater"
+            :canDrink="canDrink"
             :huntRate="huntSuccessRate"
             :food="food"
+            :water="water"
+            :snow="snow"
             @chop="handleChop"
             @hunt="handleHunt"
             @craft="handleCraft"
             @fire="handleFire"
             @eat="handleEat"
+            @collectSnow="handleCollectSnow"
+            @meltSnow="handleMeltSnow"
+            @boilWater="handleBoilWater"
+            @drinkWater="handleDrinkWater"
           />
         </div>
       </div>
@@ -112,6 +124,9 @@ const {
   food,
   hide,
   tools,
+  water,
+  snow,
+  thirst,
   isDay,
   isNight,
   dayCount,
@@ -121,12 +136,19 @@ const {
   actionLog,
   isDanger,
   canMakeFire,
+  canMeltSnow,
+  canBoilWater,
+  canDrink,
   huntSuccessRate,
   chopWood,
   hunt,
   makeTools,
   makeFire,
   eatFood,
+  collectSnow,
+  meltSnow,
+  boilWater,
+  drinkWater,
   saveGame,
   loadGame,
   getSaveSlots,
@@ -145,6 +167,9 @@ const {
   playEat,
   playCraft,
   playBlizzard,
+  playDrink,
+  playCollectSnow,
+  playMeltSnow,
   toggleMute
 } = useAudio()
 
@@ -201,6 +226,40 @@ function handleEat() {
   if (food.value > 0) {
     playEat()
     eatFood()
+  } else {
+    playWarning()
+  }
+}
+
+function handleCollectSnow() {
+  playCollectSnow()
+  collectSnow()
+}
+
+function handleMeltSnow() {
+  if (canMeltSnow.value) {
+    playMeltSnow()
+    meltSnow()
+    playSuccess()
+  } else {
+    playWarning()
+  }
+}
+
+function handleBoilWater() {
+  if (canBoilWater.value) {
+    playFire()
+    boilWater()
+    playSuccess()
+  } else {
+    playWarning()
+  }
+}
+
+function handleDrinkWater() {
+  if (canDrink.value) {
+    playDrink()
+    drinkWater()
   } else {
     playWarning()
   }

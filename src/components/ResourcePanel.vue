@@ -13,6 +13,16 @@
         </div>
       </div>
       <div class="resource-item">
+        <span class="resource-icon">💧</span>
+        <div class="resource-info">
+          <span class="resource-name">口渴度</span>
+          <div class="resource-bar-container">
+            <div class="resource-bar" :style="{ width: thirst + '%', background: getThirstColor() }"></div>
+          </div>
+          <span class="resource-value">{{ Math.round(thirst) }}/100</span>
+        </div>
+      </div>
+      <div class="resource-item">
         <span class="resource-icon">🪵</span>
         <div class="resource-info">
           <span class="resource-name">木头</span>
@@ -24,6 +34,20 @@
         <div class="resource-info">
           <span class="resource-name">食物</span>
           <span class="resource-value-large">{{ food }}</span>
+        </div>
+      </div>
+      <div class="resource-item">
+        <span class="resource-icon">🥤</span>
+        <div class="resource-info">
+          <span class="resource-name">净水</span>
+          <span class="resource-value-large">{{ water }}</span>
+        </div>
+      </div>
+      <div class="resource-item">
+        <span class="resource-icon">❄️</span>
+        <div class="resource-info">
+          <span class="resource-name">雪</span>
+          <span class="resource-value-large">{{ snow }}</span>
         </div>
       </div>
       <div class="resource-item">
@@ -50,13 +74,22 @@ const props = defineProps({
   wood: { type: Number, default: 0 },
   food: { type: Number, default: 0 },
   hide: { type: Number, default: 0 },
-  tools: { type: Number, default: 0 }
+  tools: { type: Number, default: 0 },
+  water: { type: Number, default: 0 },
+  snow: { type: Number, default: 0 },
+  thirst: { type: Number, default: 100 }
 })
 
 function getHeatColor() {
   if (props.heat > 60) return 'linear-gradient(to right, #ff6600, #ffcc00)'
   if (props.heat > 30) return 'linear-gradient(to right, #ff9933, #ffcc00)'
   return 'linear-gradient(to right, #cc3300, #ff6600)'
+}
+
+function getThirstColor() {
+  if (props.thirst > 60) return 'linear-gradient(to right, #00b4d8, #0077b6)'
+  if (props.thirst > 30) return 'linear-gradient(to right, #0077b6, #023e8a)'
+  return 'linear-gradient(to right, #c1121f, #660708)'
 }
 </script>
 

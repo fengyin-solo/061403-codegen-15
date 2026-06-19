@@ -54,6 +54,46 @@
         <span class="btn-cost">-1 食物</span>
         <span class="btn-hint">+5~15 体温</span>
       </button>
+      <button 
+        class="action-btn" 
+        :class="{ disabled: isNight || gameOver }"
+        @click="$emit('collectSnow')"
+      >
+        <span class="btn-icon">❄️</span>
+        <span class="btn-text">收集雪</span>
+        <span class="btn-cost">-3 体温</span>
+        <span class="btn-hint">+2~4 雪</span>
+      </button>
+      <button 
+        class="action-btn water-btn" 
+        :class="{ disabled: !canMeltSnow || gameOver }"
+        @click="$emit('meltSnow')"
+      >
+        <span class="btn-icon">🫗</span>
+        <span class="btn-text">融雪</span>
+        <span class="btn-cost">-2❄️ -10🔥</span>
+        <span class="btn-hint">+1 水</span>
+      </button>
+      <button 
+        class="action-btn water-btn" 
+        :class="{ disabled: !canBoilWater || gameOver }"
+        @click="$emit('boilWater')"
+      >
+        <span class="btn-icon">♨️</span>
+        <span class="btn-text">烧水煮雪</span>
+        <span class="btn-cost">-1❄️ -20🔥 -1🪵</span>
+        <span class="btn-hint">+2 净水</span>
+      </button>
+      <button 
+        class="action-btn drink-btn" 
+        :class="{ disabled: !canDrink || gameOver }"
+        @click="$emit('drinkWater')"
+      >
+        <span class="btn-icon">🥤</span>
+        <span class="btn-text">喝水</span>
+        <span class="btn-cost">-1 水</span>
+        <span class="btn-hint">+30~55 口渴度</span>
+      </button>
     </div>
   </div>
 </template>
@@ -64,11 +104,16 @@ defineProps({
   gameOver: { type: Boolean, default: false },
   canFire: { type: Boolean, default: false },
   canCraft: { type: Boolean, default: false },
+  canMeltSnow: { type: Boolean, default: false },
+  canBoilWater: { type: Boolean, default: false },
+  canDrink: { type: Boolean, default: false },
   huntRate: { type: Number, default: 0.3 },
-  food: { type: Number, default: 0 }
+  food: { type: Number, default: 0 },
+  water: { type: Number, default: 0 },
+  snow: { type: Number, default: 0 }
 })
 
-defineEmits(['chop', 'hunt', 'craft', 'fire', 'eat'])
+defineEmits(['chop', 'hunt', 'craft', 'fire', 'eat', 'collectSnow', 'meltSnow', 'boilWater', 'drinkWater'])
 </script>
 
 <style scoped>
@@ -152,6 +197,24 @@ defineEmits(['chop', 'hunt', 'craft', 'fire', 'eat'])
 
 .food-btn:hover:not(.disabled) {
   box-shadow: 0 5px 20px rgba(50, 200, 100, 0.4);
+}
+
+.water-btn:not(.disabled) {
+  border-color: rgba(0, 180, 216, 0.6);
+  background: linear-gradient(135deg, rgba(0, 180, 216, 0.3), rgba(0, 119, 182, 0.1));
+}
+
+.water-btn:hover:not(.disabled) {
+  box-shadow: 0 5px 20px rgba(0, 180, 216, 0.4);
+}
+
+.drink-btn:not(.disabled) {
+  border-color: rgba(72, 202, 228, 0.6);
+  background: linear-gradient(135deg, rgba(72, 202, 228, 0.3), rgba(0, 150, 199, 0.1));
+}
+
+.drink-btn:hover:not(.disabled) {
+  box-shadow: 0 5px 20px rgba(72, 202, 228, 0.4);
 }
 
 .btn-icon {
