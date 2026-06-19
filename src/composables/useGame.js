@@ -60,17 +60,19 @@ export function useGame() {
   }
 
   function checkGameOver() {
-    if (temperature.value <= 20) {
+    if (temperature.value <= 20 && !gameOver.value) {
       gameOver.value = true
       gameOverReason.value = '体温过低，你在严寒中失去了意识...'
       stopTimers()
       addLog('游戏结束：体温过低！', 'danger')
+      saveGame('auto')
     }
-    if (thirst.value <= 0) {
+    if (thirst.value <= 0 && !gameOver.value) {
       gameOver.value = true
       gameOverReason.value = '严重脱水，你在口渴中倒下了...'
       stopTimers()
       addLog('游戏结束：脱水而亡！', 'danger')
+      saveGame('auto')
     }
     if (temperature.value >= 100) {
       temperature.value = 100
@@ -344,6 +346,8 @@ export function useGame() {
       isDay: isDay.value,
       dayCount: dayCount.value,
       isBlizzard: isBlizzard.value,
+      gameOver: gameOver.value,
+      gameOverReason: gameOverReason.value,
       savedAt: Date.now()
     }
     localStorage.setItem(`snowSurvival_${slot}`, JSON.stringify(gameState))
@@ -353,7 +357,6 @@ export function useGame() {
   function loadGame(slot = 'auto') {
     const saved = localStorage.getItem(`snowSurvival_${slot}`)
     if (!saved) {
-      addLog('没有找到存档', 'warning')
       return false
     }
     
@@ -371,18 +374,22 @@ export function useGame() {
       isDay.value = gameState.isDay
       dayCount.value = gameState.dayCount
       isBlizzard.value = gameState.isBlizzard
-      gameOver.value = false
-      gameOverReason.value = ''
+      gameOver.value = gameState.gameOver ?? false
+      gameOverReason.value = gameState.gameOverReason ?? ''
       actionLog.value = []
       
       stopTimers()
-      startTimers()
       
-      if (!isDay.value) {
-        startNightCycle()
+      if (!gameOver.value) {
+        startTimers()
+        if (!isDay.value) {
+          startNightCycle()
+        }
+        addLog(`成功加载存档：${slot === 'auto' ? '自动存档' : slot}`, 'success')
+      } else {
+        addLog(`加载存档：游戏已结束`, 'info')
       }
       
-      addLog(`成功加载存档：${slot === 'auto' ? '自动存档' : slot}`, 'success')
       return true
     } catch (e) {
       addLog('存档损坏，无法加载', 'danger')
@@ -438,8 +445,11 @@ export function useGame() {
   }
 
   onMounted(() => {
-    startTimers()
-    addLog('欢迎来到雪地生存！白天收集资源，夜晚保持温暖。', 'info')
+    const autoLoaded = loadGame('auto')
+    if (!autoLoaded) {
+      startTimers()
+      addLog('欢迎来到雪地生存！白天收集资源，夜晚保持温暖。记得收集雪来获得饮用水。', 'info')
+    }
   })
 
   onUnmounted(() => {
